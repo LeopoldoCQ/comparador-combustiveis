@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comparador Econômico de Combustíveis — Álcool vs. Gasolina</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono para blocos matemáticos/código -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-emerald-200 selection:text-emerald-900">
+
+  <!-- Cabeçalho Institucional / Didático -->
+  <header class="bg-slate-900 text-white shadow-md border-b border-slate-800">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shrink-0">
+          <!-- Ícone de Bomba de Combustível (SVG Inline) -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h11M9 21V3m0 0H5a2 2 0 00-2 2v16h12V5a2 2 0 00-2-2H9zm6 4h2a2 2 0 012 2v6a2 2 0 002 2v0a2 2 0 002-2V9.828a2 2 0 00-.586-1.414l-2.828-2.828" />
+          </svg>
+        </div>
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-emerald-400 block">Matemática Computacional • 3º EMIF</span>
+          <h1 class="text-lg sm:text-xl font-bold tracking-tight">Comparador Econômico de Combustíveis</h1>
+        </div>
+      </div>
+      <div class="text-xs text-slate-400 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 self-start sm:self-auto">
+        Regra Comercial: <span class="text-white font-semibold">Álcool ÷ Gasolina ≤ 70%</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+      <!-- Coluna Esquerda: Formulário de Entrada e Cenários Didáticos (5 colunas no desktop) -->
+      <section class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-6">
+        <div>
+          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-slate-900 text-white text-xs flex items-center justify-center font-bold">1</span>
+            Preços na Bomba (R$/L)
+          </h2>
+          <p class="text-xs text-slate-500 mt-1">Informe os valores por litro do álcool e da gasolina para comparar.</p>
+        </div>
+
+        <!-- Mensagem de Erro / Validação (substitui alert()) -->
+        <div id="errorBox" class="hidden rounded-xl bg-rose-50 border border-rose-200 p-3.5 text-sm text-rose-700 flex items-start gap-2.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+          <span id="errorMessage">Por favor, insira valores válidos maiores que zero.</span>
+        </div>
+
+        <form id="fuelForm" class="space-y-4" novalidate>
+          <!-- Campo Álcool -->
+          <div>
+            <label for="precoAlcool" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Preço do Litro do Álcool (Etanol)
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-semibold text-sm pointer-events-none">
+                R$
+              </span>
+              <input
+                type="number"
+                id="precoAlcool"
+                step="0.01"
+                min="0.01"
+                placeholder="Ex: 3,64"
+                value="3.64"
+                class="w-full pl-10 pr-12 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-semibold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                required
+              />
+              <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 text-xs font-medium pointer-events-none">
+                / litro
+              </span>
+            </div>
+          </div>
+
+          <!-- Campo Gasolina -->
+          <div>
+            <label for="precoGasolina" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Preço do Litro da Gasolina
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-semibold text-sm pointer-events-none">
+                R$
+              </span>
+              <input
+                type="number"
+                id="precoGasolina"
+                step="0.01"
+                min="0.01"
+                placeholder="Ex: 5,81"
+                value="5.81"
+                class="w-full pl-10 pr-12 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-semibold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition"
+                required
+              />
+              <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 text-xs font-medium pointer-events-none">
+                / litro
+              </span>
+            </div>
+          </div>
+
+          <!-- Botões de Ação -->
+          <div class="pt-1 flex flex-col sm:flex-row gap-2.5">
+            <button
+              type="submit"
+              class="flex-1 bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white font-semibold py-3 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              Calcular Melhor Opção
+            </button>
+            <button
+              type="button"
+              id="btnLimpar"
+              class="sm:w-auto bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-3 px-4 rounded-xl transition text-sm cursor-pointer"
+              title="Limpar campos"
+            >
+              Limpar
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Coluna Direita: Painel de Resultado, Medidor e Explicação Didática (7 colunas no desktop) -->
+      <section class="lg:col-span-7 space-y-6">
+
+        <!-- Card Principal de Veredito -->
+        <div id="resultCard" class="rounded-2xl shadow-sm border-2 border-emerald-500 bg-emerald-50/70 p-5 sm:p-6 transition-all duration-300">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span id="badgeCondicao" class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-600 text-white">
+                  Proporção ≤ 70,0%
+                </span>
+                <span class="text-xs text-slate-500 font-medium">Veredito do Algoritmo</span>
+              </div>
+              <h2 id="vereditoTitulo" class="text-xl sm:text-2xl font-extrabold text-emerald-950 pt-1">
+                Compensa mais abastecer com ÁLCOOL!
+              </h2>
+              <p id="vereditoSubtitulo" class="text-sm text-emerald-800">
+                O preço do etanol está abaixo do limite de 70% do valor da gasolina, garantindo maior economia por quilômetro rodado.
+              </p>
+            </div>
+
+            <!-- Display Numérico da Proporção -->
+            <div id="proporcaoBox" class="bg-white rounded-2xl px-5 py-3.5 border border-emerald-200 shadow-xs text-center shrink-0">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Proporção</span>
+              <span id="proporcaoValor" class="text-3xl sm:text-4xl font-extrabold text-emerald-600 tracking-tight">
+                62,7%
+              </span>
+            </div>
+          </div>
+
+          <!-- Medidor Visual (Termômetro de 70%) -->
+          <div class="mt-6 pt-5 border-t border-slate-200/70">
+            <div class="flex items-center justify-between text-xs font-semibold mb-2">
+              <span class="text-emerald-700">Zona do Álcool (≤ 70%)</span>
+              <span class="text-slate-600 bg-white px-2 py-0.5 rounded border border-slate-200">Corte: 70,0%</span>
+              <span class="text-amber-700">Zona da Gasolina (&gt; 70%)</span>
+            </div>
+
+            <!-- Barra de Progresso com Marcador de 70% -->
+            <div class="relative h-5 bg-slate-200 rounded-full overflow-hidden shadow-inner">
+              <!-- Fundo dividido visualmente na marca de 70% (escala de 0% a 100%) -->
+              <div class="absolute inset-y-0 left-0 w-[70%] bg-emerald-200/60"></div>
+              <div class="absolute inset-y-0 right-0 w-[30%] bg-amber-200/60"></div>
+
+              <!-- Barra preenchida dinâmica -->
+              <div
+                id="gaugeFill"
+                class="h-full bg-emerald-600 rounded-l-full transition-all duration-500 ease-out"
+                style="width: 62.7%;"
+              ></div>
+
+              <!-- Linha vertical fixa nos 70% -->
+              <div
+                class="absolute inset-y-0 left-[70%] w-0.5 bg-slate-900 z-10"
+                title="Ponto de Equilíbrio: 70%"
+              ></div>
+            </div>
+
+            <div class="flex justify-between text-[11px] text-slate-400 mt-1.5 font-mono">
+              <span>0%</span>
+              <span class="pl-8 font-bold text-slate-700">70% (Limite)</span>
+              <span>100%</span>
+            </div>
+          </div>
+
+          <!-- Indicador Extra: Preço Limite do Álcool -->
+          <div class="mt-5 bg-white/90 rounded-xl p-3.5 border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm">
+            <span class="text-slate-600">
+              Para esta gasolina (<strong id="resGasolinaRef" class="text-slate-900">R$ 5,81</strong>), o álcool compensa até:
+            </span>
+            <span id="precoLimiteAlcool" class="font-bold text-slate-900 bg-slate-100 px-3 py-1 rounded-lg self-start sm:self-auto">
+              R$ 4,07 / litro
+            </span>
+          </div>
+        </div>
+
+        <!-- Card Didático: Passo a Passo Matemático e Rastreamento do Código Python -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-slate-900 text-white text-xs flex items-center justify-center font-bold">2</span>
+              Passo a Passo Matemático & Execução em Python
+            </h3>
+            <span class="text-xs font-mono text-slate-400">Trace Table</span>
+          </div>
+
+          <!-- Passos Matemáticos -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
+              <span class="text-xs font-semibold text-slate-400 block mb-1">1º Passo: Razão</span>
+              <div class="font-mono text-xs text-slate-600">preco_alcool / preco_gasolina</div>
+              <div id="mathStep1" class="font-mono font-bold text-slate-900 mt-1">3,64 ÷ 5,81 = 0,6265</div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
+              <span class="text-xs font-semibold text-slate-400 block mb-1">2º Passo: Percentual (:.1f)</span>
+              <div class="font-mono text-xs text-slate-600">proporcao * 100</div>
+              <div id="mathStep2" class="font-mono font-bold text-slate-900 mt-1">0,6265 × 100 = 62,7%</div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
+              <span class="text-xs font-semibold text-slate-400 block mb-1">3º Passo: Condicional (if)</span>
+              <div class="font-mono text-xs text-slate-600">proporcao &lt;= 0.70</div>
+              <div id="mathStep3" class="font-mono font-bold text-emerald-600 mt-1">0,6265 ≤ 0,70 → Verdadeiro</div>
+            </div>
+          </div>
+
+          <!-- Bloco de Código Python Dinâmico -->
+          <div class="bg-slate-900 text-slate-200 rounded-xl p-4 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed border border-slate-800">
+            <div class="flex items-center justify-between text-[11px] text-slate-400 pb-2 mb-2 border-b border-slate-800">
+              <span>Simulação da Estrutura Condicional (Python)</span>
+              <span id="pythonBranchTag" class="text-emerald-400 font-semibold">Executando bloco: if</span>
+            </div>
+            <pre class="whitespace-pre-wrap"><span class="text-slate-400"># Valores armazenados nas variáveis:</span>
+preco_alcool = <span id="codeAlcool" class="text-sky-300">3.64</span>
+preco_gasolina = <span id="codeGasolina" class="text-sky-300">5.81</span>
+proporcao = <span id="codeProporcao" class="text-amber-300">0.6265</span>
+
+<span id="codeIfBlock" class="block rounded px-2 py-1 bg-emerald-500/15 border-l-2 border-emerald-400 text-emerald-200"><span class="text-purple-400 font-semibold">if</span> proporcao &lt;= 0.70:
+    print(f"Proporção: <span id="codeOutPctIf" class="text-white font-bold">62.7%</span>")
+    print("Resultado: Compensa mais abastecer com ÁLCOOL!")</span><span id="codeElseBlock" class="block rounded px-2 py-1 opacity-45"><span class="text-purple-400 font-semibold">else</span>:
+    print(f"Proporção: <span id="codeOutPctElse" class="text-white">62.7%</span>")
+    print("Resultado: Compensa mais abastecer com GASOLINA!")</span></pre>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="bg-white border-t border-slate-200 mt-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
+      <span>Ferramenta Didática • Matemática Computacional e Lógica de Programação</span>
+      <span>Regra de Referência: 70% (0,70)</span>
+    </div>
+  </footer>
+
+  <!-- Lógica JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Referências aos elementos do DOM
+      const form = document.getElementById('fuelForm');
+      const inputAlcool = document.getElementById('precoAlcool');
+      const inputGasolina = document.getElementById('precoGasolina');
+      const btnLimpar = document.getElementById('btnLimpar');
+
+      const errorBox = document.getElementById('errorBox');
+      const errorMessage = document.getElementById('errorMessage');
+// ... existing code ... -->
+          if (!isNaN(valA) && valA > 0 && !isNaN(valG) && valG > 0) {
+            calcularCombustivel();
+          }
+        });
+      });
+
+      // Botão Limpar
+      btnLimpar.addEventListener('click', () => {
+        inputAlcool.value = '';
+        inputGasolina.value = '';
+        ocultarErro();
+        inputAlcool.focus();
+      });
+
+      // Executa o cálculo inicial com os valores padrão ao carregar a página
+      calcularCombustivel();
+    });
+  </script>
+</body>
+</html>
